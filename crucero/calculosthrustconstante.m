@@ -1,0 +1,49 @@
+clear all
+[t Y]= ode45('thrustconstante',[0:100:63000],[280000*9.81;0],'RelTol',1e-5,'AbsTol',1e-7);
+S=395.88;
+rho=0.3639;
+gamma=1.4;
+np=1;
+pic=40;
+Tt4=1100;
+Text=220;
+M9=1;
+h=43*10^6;
+Cp=1050;
+g=9.8;
+Rg=287;
+a0=sqrt(gamma*Rg*Text);
+thrust=280000*9.8/18.5;
+np=1;
+pic=40;
+Tt4=1100;
+Text=220;
+M9=1;
+h=43*10^6;
+Cp=1050;
+g=9.8;
+Rg=287;
+a0=sqrt(gamma*Rg*Text);
+Clopt=0.473622606;
+Em=18.8598467;
+vri=sqrt(2*280000*9.81/(rho*S*Clopt));
+v=zeros(length(t),1);
+for i=1:length(t)
+    v(i)=vri*sqrt(thrust*Em/(280000*9.81)+(sqrt((thrust*Em/(280000*9.81))^2-(Y(i,1)/(280000*9.81))^2)));
+end
+M0=v/a0;
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+theta0=1+ M0.*M0*0.5*(gamma-1);
+delta0=theta0.^(gamma/(gamma-1));
+tauc=pic^((gamma-1)/(gamma*np));
+thetat=Tt4/Text;
+taut=1-theta0*(tauc-1)/thetat;
+pit=taut.^(gamma/((gamma-1)/np));
+T9fracT0=2*thetat*taut/(1+gamma);
+P0fracP9=(((1+gamma)/2).^(gamma/(gamma-1)))/(delta0.*pic.*pit);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Tadim=M9*T9fracT0.^0.5-M0+(1-P0fracP9')/(gamma*M9);
+f=Cp*Text*(thetat-theta0*tauc)/h;
+a0=sqrt(gamma*Rg*Text);
+Isp=Tadim.*a0.*f.^-1/g;
+cew=abs(1.*(Isp).^-1);
